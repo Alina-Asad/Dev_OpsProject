@@ -3,29 +3,20 @@
 
     WORKDIR /app
     
-    # Copy package.json and install dependencies
     COPY package*.json ./
     RUN npm install
     
-    # Copy source code and build the React app
     COPY . .
     RUN npm run build
     
     # -------- Stage 2: Nginx Serve --------
     FROM nginx:alpine
     
-    # Remove the default nginx static files
     RUN rm -rf /usr/share/nginx/html/*
     
-    # Copy built files from previous stage to nginx directory
-    COPY --from=build /app/dist /usr/share/nginx/html
+    # If output is in 'build', change below accordingly
+    COPY --from=build /app/build /usr/share/nginx/html
     
-    # (Optional) Custom Nginx config can be added here
-    # COPY nginx.conf /etc/nginx/nginx.conf
-    
-    # Expose port 80
     EXPOSE 80
-    
-    # Start nginx
     CMD ["nginx", "-g", "daemon off;"]
     

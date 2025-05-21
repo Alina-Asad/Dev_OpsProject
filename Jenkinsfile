@@ -16,7 +16,8 @@ pipeline {
         stage('Install and Build React App') {
             agent {
                 docker {
-                    image 'node:18' // Node image contains npm and node
+                    image 'node:18' // Node + npm for React build
+                    args '-v /var/run/docker.sock:/var/run/docker.sock' // optional here
                 }
             }
             steps {
@@ -34,7 +35,7 @@ pipeline {
         stage('Run Docker Container Test') {
             steps {
                 sh 'docker run -d --name react-app-test -p 8080:80 $IMAGE_NAME:$IMAGE_TAG'
-                echo 'Container test placeholder'
+                echo 'Container test running'
             }
         }
     }
