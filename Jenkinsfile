@@ -13,14 +13,14 @@ pipeline {
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Install and Build React App') {
+            agent {
+                docker {
+                    image 'node:18' // Node image contains npm and node
+                }
+            }
             steps {
                 sh 'npm install'
-            }
-        }
-
-        stage('Build React App') {
-            steps {
                 sh 'npm run build'
             }
         }
