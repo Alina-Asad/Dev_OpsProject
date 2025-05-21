@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'node:18' // Use official Node.js image
+            args '-v /var/run/docker.sock:/var/run/docker.sock' // Allow Docker access
+        }
+    }
 
     environment {
         IMAGE_NAME = "leenamalik/react-app-nginx"
@@ -36,11 +41,11 @@ pipeline {
         stage('Run Docker Container Test') {
             steps {
                 script {
-                    docker.image("${IMAGE_NAME}:${IMAGE_TAG}").inside {
-                        // run your tests here, e.g. 
-                        // sh 'npm test' or any container health check
-                        echo 'Container test placeholder'
-                    }
+                    sh """
+                        docker run -d --name react-app-test -p 8080:80 ${IMAGE_NAME}:${IMAGE_TAG}
+                        sleep 5
+                        docker ps | grep react-app-test
+                    """
                 }
             }
         }
